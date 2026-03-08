@@ -7,5 +7,6 @@ export const useCoinHistory = (coinId: string, currency: string) => {
         queryKey: ['coinHistory', coinId, currency],
         queryFn: () => getCoinHistory(coinId, currency),
         enabled: !!coinId,
+        retry: false,
     });
 };

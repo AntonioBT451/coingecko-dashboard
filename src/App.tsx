@@ -1,5 +1,6 @@
 import { Box, Container, Typography } from '@mui/material';
 import CryptoTable from './components/CryptoTable';
+import CryptoChart from './components/CryptoChart';
 
 export const App = () => {
   return (
@@ -10,7 +11,9 @@ export const App = () => {
         </Typography>
       </Box>
 
+      <CryptoChart coinId='bitcoin' currency='usd' />
       <CryptoTable currency='usd' />
+
     </Container>
   )
 };
