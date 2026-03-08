@@ -1,4 +1,5 @@
 import { Box, Container, Typography } from '@mui/material';
+import CryptoTable from './components/CryptoTable';
 
 export const App = () => {
   return (
@@ -8,6 +9,8 @@ export const App = () => {
           Dashboard Dinametra
         </Typography>
       </Box>
+
+      <CryptoTable currency='usd' />
     </Container>
   )
 };
