@@ -4,11 +4,12 @@ import CryptoTable from './components/CryptoTable';
 import CryptoChart from './components/CryptoChart';
 import { useTopCoins } from './hooks/useTopCoins';
 import SearchBar from './components/SearchBar';
+import CurrencySelector from './components/CurrencySelector';
 
 export const App = () => {
 
   const [selectedCoin, setSelectedCoin] = useState('bitcoin');
-  const [currency] = useState('usd');
+  const [currency, setCurrency] = useState('usd');
   const [searchTerm, setSearchTerm] = useState('');
 
   const { data: coins, isLoading, isError } = useTopCoins(currency);
@@ -31,6 +32,7 @@ export const App = () => {
 
         <Box className="w-full md:w-1/3">
           <SearchBar value={searchTerm} onChange={setSearchTerm} />
+          <CurrencySelector value={currency} onChange={setCurrency} />
         </Box>
       </Box>
 
