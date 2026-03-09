@@ -9,6 +9,11 @@ export interface Coin {
     market_cap: number;
     market_cap_rank: number;
     price_change_percentage_24h: number;
+    sparkline_in_7d?: SparklineIn7d;
+}
+
+interface SparklineIn7d {
+    price: number[];
 }
 
 export interface ChartData {

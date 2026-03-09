@@ -6,9 +6,9 @@ export const getTopCoins = async (currency: string = 'usd'): Promise<Coin[]> => 
         params: {
             vs_currency: currency,
             order: 'market_cap_desc',
-            per_page: 10,
+            per_page: 20,
             page: 1,
-            sparkline: false,
+            sparkline: true,
         },
     })
     return data;

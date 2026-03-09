@@ -5,6 +5,7 @@ import CryptoChart from './components/CryptoChart';
 import { useTopCoins } from './hooks/useTopCoins';
 import SearchBar from './components/SearchBar';
 import CurrencySelector from './components/CurrencySelector';
+import HighlightsSection from './components/HighlightsSection';
 
 export const App = () => {
 
@@ -35,6 +36,8 @@ export const App = () => {
           <CurrencySelector value={currency} onChange={setCurrency} />
         </Box>
       </Box>
+
+      <HighlightsSection coins={coins} currency={currency} isError={isError} isLoading={isLoading} />
 
       <CryptoChart coinId={selectedCoin} currency={currency} />
 
