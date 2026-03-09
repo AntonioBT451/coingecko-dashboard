@@ -6,18 +6,17 @@ import {
 import { Box, Typography, CircularProgress, Paper } from '@mui/material';
 import { useCoinHistory } from '../hooks/useCoinHistory';
 
-interface Props {
+interface CryptoChartProps {
     coinId: string;
     currency: string;
 }
 
-const CryptoChart = ({ coinId, currency }: Props) => {
+const CryptoChart = ({ coinId, currency }: CryptoChartProps) => {
     const { data, isLoading, isError } = useCoinHistory(coinId, currency);
 
     if (isLoading) return <Box display="flex" justifyContent="center" p={5}><CircularProgress /></Box>;
     if (isError) return <Typography color="error">Error al cargar el histórico.</Typography>;
 
-    // 1. Transformar datos para Recharts
     const formattedData = data?.prices.map(([timestamp, price]) => ({
         date: new Date(timestamp).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' }),
         price: price,
@@ -57,7 +56,7 @@ const CryptoChart = ({ coinId, currency }: Props) => {
                                 border: 'none',
                                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
                             }}
-                            // Cambiamos el tipado de 'value' a 'any' o 'number' con validación
+
                             formatter={(value: any) => {
                                 const numericValue = Number(value);
                                 return [
