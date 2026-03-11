@@ -14,12 +14,12 @@ export const getTopCoins = async (currency: string = 'usd'): Promise<Coin[]> => 
     return data;
 };
 
-export const getCoinHistory = async (id: string, currency: string = 'usd'): Promise<ChartData> => {
+export const getCoinHistory = async (id: string, currency: string = 'usd', days: number = 7): Promise<ChartData> => {
     const { data } = await coingeckoApi.get<ChartData>(`/coins/${id}/market_chart`, {
         params: {
             vs_currency: currency,
-            days: 7,
-            interval: 'daily',
+            days: days,
+            // interval: days > 30 ? 'daily' : 'hourly',
         },
     });
 

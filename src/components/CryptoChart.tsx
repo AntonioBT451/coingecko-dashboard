@@ -1,9 +1,9 @@
-
+import { useState } from 'react';
 import {
     XAxis, YAxis, CartesianGrid,
     Tooltip, ResponsiveContainer, Area, AreaChart
 } from 'recharts';
-import { Box, Typography, CircularProgress, Paper } from '@mui/material';
+import { Box, Typography, CircularProgress, Paper, Stack, Chip } from '@mui/material';
 import { useCoinHistory } from '../hooks/useCoinHistory';
 
 interface CryptoChartProps {
@@ -12,7 +12,15 @@ interface CryptoChartProps {
 }
 
 const CryptoChart = ({ coinId, currency }: CryptoChartProps) => {
-    const { data, isLoading, isError } = useCoinHistory(coinId, currency);
+    const [days, setDays] = useState(7);
+
+    const { data, isLoading, isError } = useCoinHistory(coinId, currency, days);
+
+    const timeOptions = [
+        { label: '1 Semana', value: 7 },
+        { label: '1 Mes', value: 30 },
+        { label: '1 Año', value: 365 },
+    ];
 
     if (isLoading) return <Box display="flex" justifyContent="center" p={5}><CircularProgress /></Box>;
     if (isError) return <Typography color="error">Error al cargar el histórico.</Typography>;
@@ -24,9 +32,48 @@ const CryptoChart = ({ coinId, currency }: CryptoChartProps) => {
 
     return (
         <Paper elevation={2} className="p-6 rounded-2xl bg-white mb-8">
-            <Typography variant="h6" className="mb-4 font-bold capitalize">
-                Tendencia - {coinId} (Últimos 7 días)
-            </Typography>
+            <Box className="flex flex-col mb-6">
+                <Box className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <Typography variant="h5" className="font-black text-slate-800 capitalize">
+                        {coinId}
+                    </Typography>
+
+                    <Stack direction="row" spacing={1} className="flex-wrap">
+                        {timeOptions.map((option) => (
+                            <Chip
+                                key={option.value}
+                                label={option.label}
+                                onClick={() => setDays(option.value)}
+                                color={days === option.value ? "primary" : "default"}
+                                variant={days === option.value ? "filled" : "outlined"}
+                                size="medium"
+                                sx={{
+                                    borderRadius: '8px', fontWeight: 'bold', '&:hover': {
+                                        backgroundColor: days === option.value ? 'primary.dark' : 'action.hover'
+                                    }
+                                }}
+                            />
+                        ))}
+                    </Stack>
+                </Box>
+
+                {formattedData && formattedData.length > 0 && (
+                    <Box className="flex items-baseline gap-2">
+                        <Typography variant="h6" className="font-bold text-blue-700">
+                            {new Intl.NumberFormat('en-US', {
+                                style: 'currency',
+                                currency,
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            }).format(formattedData[formattedData.length - 1].price)}
+                        </Typography>
+                        <Typography variant="subtitle2" className="text-slate-400 font-medium">
+                            ({currency.toUpperCase()})
+                        </Typography>
+                    </Box>
+                )}
+            </Box>
+
 
             <div className="h-80 w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -43,10 +90,20 @@ const CryptoChart = ({ coinId, currency }: CryptoChartProps) => {
                             axisLine={false}
                             tickLine={false}
                             tick={{ fontSize: 12, fill: '#94a3b8' }}
-                            minTickGap={20}
+                            minTickGap={30}
                         />
                         <YAxis
-                            hide={true}
+                            stroke="#94a3b8"
+                            tick={{ fontSize: 12, fill: '#94a3b8' }}
+                            tickLine={false}
+                            axisLine={false}
+                            tickFormatter={(value) => {
+                                if (value >= 1000) {
+                                    return `$${(value / 1000).toFixed(1)}k`;
+                                }
+                                return `$${value}`;
+                            }}
+                            width={60}
                             domain={['auto', 'auto']}
                         />
 
