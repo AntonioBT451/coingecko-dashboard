@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Box, Container, Typography } from '@mui/material';
+import { useEffect, useMemo, useState } from 'react';
+import { Alert, Box, Container, Typography } from '@mui/material';
 import CryptoTable from './components/CryptoTable';
 import CryptoChart from './components/CryptoChart';
 import { useTopCoins } from './hooks/useTopCoins';
@@ -15,14 +15,46 @@ export const App = () => {
 
   const { data: coins, isLoading, isError } = useTopCoins(currency);
 
+  useEffect(() => {
+    const handleGlobalKeys = (e: KeyboardEvent) => {
+      // Si presiona '/', enfoca el buscador automáticamente
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT') {
+        e.preventDefault();
+        document.querySelector<HTMLInputElement>('input[placeholder*="Buscar"]')?.focus();
+      }
+    };
+
+    window.addEventListener('keydown', handleGlobalKeys);
+    return () => window.removeEventListener('keydown', handleGlobalKeys);
+  }, []);
+
   const filteredCoins = useMemo(() => {
     if (!coins) return [];
 
+    const searchLower = searchTerm.toLowerCase().trim();
     return coins.filter((coin) =>
-      coin.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      coin.symbol.toLowerCase().includes(searchTerm.toLowerCase())
+      coin.name.toLowerCase().includes(searchLower) ||
+      coin.symbol.toLowerCase().includes(searchLower)
     );
   }, [coins, searchTerm]);
+
+  if (isError) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Alert
+          severity="error"
+          variant="filled"
+          action={
+            <button onClick={() => window.location.reload()}>
+              Reintentar
+            </button>
+          }
+        >
+          'Error al cargar los datos. Por favor, intenta de nuevo.'
+        </Alert>
+      </Container>
+    );
+  }
 
   return (
     <Container maxWidth='lg' className='pb-20'>

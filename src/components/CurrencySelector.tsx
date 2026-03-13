@@ -13,18 +13,36 @@ const CurrencySelector = ({ value, onChange }: Props) => {
         { id: 'mxn', label: 'MXN', icon: <CircleDollarSign size={14} /> },
     ];
 
+    const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+
+            let nextIndex;
+            if (e.key === 'ArrowRight') {
+                nextIndex = (index + 1) % currencies.length;
+            } else {
+                nextIndex = (index - 1 + currencies.length) % currencies.length;
+            }
+
+            const nextElement = document.getElementById(`chip-${currencies[nextIndex].id}`);
+            nextElement?.focus();
+        }
+    }
+
     return (
         <Box>
             <Typography variant="caption" className="font-bold text-slate-400 uppercase tracking-widest mb-2 block ml-1">
                 Visualizar en
             </Typography>
-            <Stack direction="row" spacing={1}>
-                {currencies.map((curr) => (
+            <Stack direction="row" spacing={1} role="radiogroup" aria-label="Seleccionar divisa">
+                {currencies.map((curr, index) => (
                     <Chip
+                        id={`chip-${curr.id}`}
                         key={curr.id}
                         icon={curr.icon}
                         label={curr.label}
                         onClick={() => onChange(curr.id)}
+                        onKeyDown={(e) => handleKeyDown(e, index)}
                         variant={value === curr.id ? "filled" : "outlined"}
                         color={value === curr.id ? "primary" : "default"}
                         sx={{
@@ -36,6 +54,9 @@ const CurrencySelector = ({ value, onChange }: Props) => {
                             }
                         }}
                         className={value === curr.id ? "shadow-md" : "text-slate-500"}
+                        tabIndex={value === curr.id ? 0 : -1}
+                        role="radio"
+                        aria-checked={value === curr.id}
                     />
                 ))}
             </Stack>
