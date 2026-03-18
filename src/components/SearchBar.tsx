@@ -19,14 +19,31 @@ const SearchBar = ({ value, onChange }: SearchBarProps) => {
                 input: {
                     startAdornment: (
                         <InputAdornment position="start">
-                            <Search size={20} className="text-gray-400" />
+                            <Search size="1.2em" className="text-gray-400" />
                         </InputAdornment>
                     ),
                 },
             }}
             sx={{
+                height: '100%',
                 '& .MuiOutlinedInput-root': {
-                    '& fieldset': { borderRadius: '12px' },
+                    height: '100%',
+                    '& fieldset': {
+                        borderRadius: '12px',
+                    },
+                },
+                '& .MuiInputBase-input': {
+                    height: '100%',
+                    padding: '0 14px',
+                    fontSize: '1.0em',
+                },
+                '& .MuiInputAdornment-root': {
+                    height: '100%',
+                    maxHeight: 'none',
+                    marginRight: '2px',
+                    '& .MuiTypography-root': {
+                        fontSize: '1em',
+                    },
                 },
             }}
         />

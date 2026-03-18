@@ -18,7 +18,6 @@ const CryptoTable = ({ coins, selectedCoin, currency, onCoinSelect, isLoading, i
     const handleKeyDown = (e: React.KeyboardEvent, coinId: string, index: number) => {
         if (e.key === 'Enter') onCoinSelect(coinId);
 
-        // Navegación entre filas
         const rows = document.querySelectorAll('.crypto-row');
 
         if (e.key === 'ArrowDown' && index < coins.length - 1) {
@@ -34,9 +33,46 @@ const CryptoTable = ({ coins, selectedCoin, currency, onCoinSelect, isLoading, i
     if (isError) return <Typography color="error">Error al conectar con CoinGecko</Typography>;
 
     return (
-        <TableContainer component={Paper} elevation={3} className="rounded-xl overflow-hidden">
-            <Table sx={{ minWidth: 650 }}>
-                <TableHead className="bg-gray-50">
+        <TableContainer component={Paper} elevation={3}
+            className="overflow-auto"
+            sx={{
+                height: '100%',
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                '&::-webkit-scrollbar-track': {
+                    background: '#f1f1f1',
+                    borderRadius: '4px',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                    background: '#888',
+                    borderRadius: '4px',
+                },
+                '&::-webkit-scrollbar-thumb:hover': {
+                    background: '#555',
+                },
+            }}>
+            <Table
+                stickyHeader
+                sx={{
+                    tableLayout: 'fixed',
+                    width: '100%',
+                    '& .MuiTableCell-root': {
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                    },
+                    '& .MuiTableRow-root:hover': {
+                        backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                    }
+                }}
+            >
+                <TableHead sx={{
+                    backgroundColor: '#f3f4f6',
+                    '& .MuiTableCell-root': {
+                        backgroundColor: '#f3f4f6',
+                    }
+                }}>
                     <TableRow>
                         <TableCell><span className="font-bold">Moneda</span></TableCell>
                         <TableCell align="right"><span className="font-bold">Precio</span></TableCell>
