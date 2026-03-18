@@ -1,5 +1,6 @@
-import { Box, Typography, Stack, CircularProgress } from '@mui/material';
-import { Flame } from 'lucide-react';
+import { Box, Typography, IconButton, CircularProgress } from '@mui/material';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useRef, useState } from 'react';
 import { useTopGainers } from '../hooks/useTopGainers';
 import GainerCard from './GainerCard';
 import type { Coin } from '../types/crypto';
@@ -12,18 +13,36 @@ interface HighlightsSectionProps {
 }
 
 const HighlightsSection = ({ coins, currency, isLoading, isError }: HighlightsSectionProps) => {
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [showLeftButton, setShowLeftButton] = useState(false);
+    const [showRightButton, setShowRightButton] = useState(true);
 
     const { topGainers } = useTopGainers(coins || []);
 
+    const handleScroll = () => {
+        if (scrollContainerRef.current) {
+            const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+            setShowLeftButton(scrollLeft > 0);
+            setShowRightButton(scrollLeft < scrollWidth - clientWidth - 10);
+        }
+    };
+
+    const scroll = (direction: 'left' | 'right') => {
+        if (scrollContainerRef.current) {
+            const scrollAmount = direction === 'left' ? -300 : 300;
+            scrollContainerRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+    };
+
     if (isLoading) return (
-        <Box className="flex items-center gap-3 p-6 bg-slate-50 rounded-2xl mb-8">
+        <Box className="flex items-center justify-center h-full gap-3 p-6 bg-slate-50 rounded-xl">
             <CircularProgress size={20} />
             <Typography variant="body2" className="text-slate-500">Buscando oportunidades del mercado...</Typography>
         </Box>
     );
 
     if (isError) return (
-        <Typography color="error" className="p-4 text-center bg-red-50 rounded-xl mb-8">
+        <Typography color="error" className="p-4 text-center bg-red-50 rounded-xl h-full flex items-center justify-center">
             Error al cargar Highlights. Por favor, intenta de nuevo.
         </Typography>
     );
@@ -31,26 +50,62 @@ const HighlightsSection = ({ coins, currency, isLoading, isError }: HighlightsSe
     if (topGainers.length === 0) return null;
 
     return (
-        <Box className="mb-10">
+        <Box className="relative h-full flex items-center">
+            {/* Botón izquierdo */}
+            {showLeftButton && (
+                <IconButton
+                    onClick={() => scroll('left')}
+                    className="absolute left-0 z-10 bg-white shadow-lg hover:bg-gray-50"
+                    sx={{
+                        position: 'absolute',
+                        left: 0,
+                        transform: 'translateY(-50%)',
+                        top: '50%',
+                        '&:hover': { bgcolor: 'white' }
+                    }}
+                >
+                    <ChevronLeft />
+                </IconButton>
+            )}
 
-            {/* Título de la Sección */}
-            <Box className="flex items-center gap-3 mb-5 ml-1">
-                <Flame className="text-orange-500" size={24} />
-                <Typography variant="h6" className="font-black text-cyan-950 uppercase tracking-widest text-sm">
-                    Highlights
-                </Typography>
-            </Box>
+            {/* Botón derecho */}
+            {showRightButton && (
+                <IconButton
+                    onClick={() => scroll('right')}
+                    className="absolute right-0 z-10 bg-white shadow-lg hover:bg-gray-50"
+                    sx={{
+                        position: 'absolute',
+                        right: 0,
+                        transform: 'translateY(-50%)',
+                        top: '50%',
+                        '&:hover': { bgcolor: 'white' }
+                    }}
+                >
+                    <ChevronRight />
+                </IconButton>
+            )}
 
-            {/* Contenedor Horizontal de Tarjetas */}
-            <Stack
-                direction={{ xs: 'column', sm: 'row' }}
-                spacing={3}
-                className="overflow-x-auto pb-2 -mb-2"
+            {/* Contenedor desplazable */}
+            <Box
+                ref={scrollContainerRef}
+                onScroll={handleScroll}
+                className="overflow-x-auto scrollbar-hide flex gap-4 h-full items-center"
+                sx={{
+                    scrollbarWidth: 'none',
+                    '&::-webkit-scrollbar': { display: 'none' },
+                    msOverflowStyle: 'none',
+                    px: 0.5
+                }}
             >
                 {topGainers.map((coin) => (
-                    <GainerCard key={coin.id} coin={coin} currency={currency} />
+                    <Box key={coin.id} className="shrink-0 first:ml-0 last:mr-0">
+                        <GainerCard
+                            coin={coin}
+                            currency={currency}
+                        />
+                    </Box>
                 ))}
-            </Stack>
+            </Box>
         </Box>
     );
 };
