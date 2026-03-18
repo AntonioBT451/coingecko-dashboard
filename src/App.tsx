@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Alert, Box, Container, Typography } from '@mui/material';
+import { Alert, Container, Paper, Typography } from '@mui/material';
 import CryptoTable from './components/CryptoTable';
 import CryptoChart from './components/CryptoChart';
 import { useTopCoins } from './hooks/useTopCoins';
@@ -17,7 +17,6 @@ export const App = () => {
 
   useEffect(() => {
     const handleGlobalKeys = (e: KeyboardEvent) => {
-      // Si presiona '/', enfoca el buscador automáticamente
       if (e.key === '/' && document.activeElement?.tagName !== 'INPUT') {
         e.preventDefault();
         document.querySelector<HTMLInputElement>('input[placeholder*="Buscar"]')?.focus();
@@ -57,31 +56,52 @@ export const App = () => {
   }
 
   return (
-    <Container maxWidth='lg' className='pb-20'>
-      <Box sx={{ my: 4 }} className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <Typography variant='h4' component='h1' gutterBottom className='font-bold text-cyan-950' >
-          Dashboard Dinametra
-        </Typography>
+    <main className="w-screen h-screen overflow-hidden p-3">
 
-        <Box className="w-full md:w-1/3">
-          <SearchBar value={searchTerm} onChange={setSearchTerm} />
-          <CurrencySelector value={currency} onChange={setCurrency} />
-        </Box>
-      </Box>
+      {/* Grid principal */}
+      <div className="grid grid-cols-2 grid-rows-13 gap-3 w-full h-full">
 
-      <HighlightsSection coins={coins} currency={currency} isError={isError} isLoading={isLoading} />
+        {/* Header */}
+        <header className="col-span-1 row-span-1 flex items-center justify-center">
+          <Typography variant='h4' className='font-black tracking-tighter text-cyan-900'>
+            Crypto Dashboard
+          </Typography>
+        </header>
 
-      <CryptoChart coinId={selectedCoin} currency={currency} />
+        {/* Panel derecho */}
+        <Paper elevation={3} sx={{ borderRadius: '1rem' }} className="col-span-1 row-span-13 p-3">
+          <div className="grid grid-cols-2 grid-rows-10 gap-3 w-full h-full">
+            <div className="col-span-1 row-span-1">
+              <SearchBar value={searchTerm} onChange={setSearchTerm} />
+            </div>
+            <div className="col-span-1 row-span-1 justify-items-end">
+              <CurrencySelector value={currency} onChange={setCurrency} />
+            </div>
 
-      <CryptoTable
-        coins={filteredCoins}
-        selectedCoin={selectedCoin}
-        onCoinSelect={setSelectedCoin}
-        currency={currency}
-        isLoading={isLoading}
-        isError={isError}
-      />
+            <div className="col-span-2 row-span-9 min-h-0 overflow-hidden">
+              <CryptoTable
+                coins={filteredCoins}
+                selectedCoin={selectedCoin}
+                onCoinSelect={setSelectedCoin}
+                currency={currency}
+                isLoading={isLoading}
+                isError={isError}
+              />
+            </div>
+          </div>
+        </Paper>
 
-    </Container>
+        {/* Panel izquierdo superior */}
+        <div className="col-span-1 row-span-8 bg-white rounded-xl">
+          <CryptoChart coinId={selectedCoin} currency={currency} />
+        </div>
+
+        {/* Panel izquierdo inferior */}
+        <div className="col-span-1 row-span-4 ">
+          <HighlightsSection coins={coins} currency={currency} isError={isError} isLoading={isLoading} />
+        </div>
+
+      </div>
+    </main>
   )
 };
