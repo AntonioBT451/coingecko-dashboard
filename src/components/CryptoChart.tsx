@@ -17,13 +17,22 @@ const CryptoChart = ({ coinId, currency }: CryptoChartProps) => {
     const { data, isLoading, isError } = useCoinHistory(coinId, currency, days);
 
     const timeOptions = [
-        { label: '1 Semana', value: 7 },
-        { label: '1 Mes', value: 30 },
-        { label: '1 Año', value: 365 },
+        { label: 'Semana', value: 7 },
+        { label: 'Mes', value: 30 },
+        { label: 'Año', value: 365 },
     ];
 
-    if (isLoading) return <Box display="flex" justifyContent="center" p={5}><CircularProgress /></Box>;
-    if (isError) return <Typography color="error">Error al cargar el histórico.</Typography>;
+    if (isLoading) return (
+        <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+            <CircularProgress />
+        </Box>
+    );
+
+    if (isError) return (
+        <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+            <Typography color="error">Error al cargar el histórico.</Typography>
+        </Box>
+    );
 
     const formattedData = data?.prices.map(([timestamp, price]) => ({
         date: new Date(timestamp).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' }),
@@ -31,8 +40,9 @@ const CryptoChart = ({ coinId, currency }: CryptoChartProps) => {
     }));
 
     return (
-        <Paper elevation={2} className="p-6 rounded-2xl bg-white mb-8">
-            <Box className="flex flex-col mb-6">
+        <Paper elevation={3} className="p-3 h-full flex flex-col" sx={{ borderRadius: '1rem' }}>
+            {/* Header */}
+            <Box className="flex flex-col mb-4 shrink-0">
                 <Box className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <Typography variant="h5" className="font-black text-slate-800 capitalize">
                         {coinId}
@@ -48,7 +58,9 @@ const CryptoChart = ({ coinId, currency }: CryptoChartProps) => {
                                 variant={days === option.value ? "filled" : "outlined"}
                                 size="medium"
                                 sx={{
-                                    borderRadius: '8px', fontWeight: 'bold', '&:hover': {
+                                    borderRadius: '8px',
+                                    fontWeight: 'bold',
+                                    '&:hover': {
                                         backgroundColor: days === option.value ? 'primary.dark' : 'action.hover'
                                     }
                                 }}
@@ -74,10 +86,10 @@ const CryptoChart = ({ coinId, currency }: CryptoChartProps) => {
                 )}
             </Box>
 
-
-            <div className="h-80 w-full">
+            {/* Contenedor del gráfico */}
+            <div className="flex-1 w-full min-h-0">
                 <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={formattedData}>
+                    <AreaChart data={formattedData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                         <defs>
                             <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
@@ -106,14 +118,12 @@ const CryptoChart = ({ coinId, currency }: CryptoChartProps) => {
                             width={60}
                             domain={['auto', 'auto']}
                         />
-
                         <Tooltip
                             contentStyle={{
                                 borderRadius: '10px',
                                 border: 'none',
                                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
                             }}
-
                             formatter={(value: any) => {
                                 const numericValue = Number(value);
                                 return [
