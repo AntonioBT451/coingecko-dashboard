@@ -12,12 +12,12 @@ interface HighlightsSectionProps {
     isError: boolean;
 }
 
-const HighlightsSection = ({ coins, currency, isLoading, isError }: HighlightsSectionProps) => {
+const HighlightsSection = ({ coins = [], currency, isLoading, isError }: HighlightsSectionProps) => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [showLeftButton, setShowLeftButton] = useState(false);
     const [showRightButton, setShowRightButton] = useState(true);
 
-    const { topGainers } = useTopGainers(coins || []);
+    const { topGainers } = useTopGainers(coins);
 
     const handleScroll = () => {
         if (scrollContainerRef.current) {
@@ -55,8 +55,9 @@ const HighlightsSection = ({ coins, currency, isLoading, isError }: HighlightsSe
             {showLeftButton && (
                 <IconButton
                     onClick={() => scroll('left')}
-                    className="absolute left-0 z-10 bg-white shadow-lg hover:bg-gray-50"
+                    className="absolute left-0 z-10 bg-white  hover:bg-gray-50"
                     sx={{
+                        boxShadow: 4,
                         position: 'absolute',
                         left: 0,
                         transform: 'translateY(-50%)',
@@ -72,8 +73,9 @@ const HighlightsSection = ({ coins, currency, isLoading, isError }: HighlightsSe
             {showRightButton && (
                 <IconButton
                     onClick={() => scroll('right')}
-                    className="absolute right-0 z-10 bg-white shadow-lg hover:bg-gray-50"
+                    className="absolute right-0 z-10 bg-white hover:bg-gray-50"
                     sx={{
+                        boxShadow: 4,
                         position: 'absolute',
                         right: 0,
                         transform: 'translateY(-50%)',
@@ -89,16 +91,23 @@ const HighlightsSection = ({ coins, currency, isLoading, isError }: HighlightsSe
             <Box
                 ref={scrollContainerRef}
                 onScroll={handleScroll}
-                className="overflow-x-auto scrollbar-hide flex gap-4 h-full items-center"
+                className="overflow-x-auto scrollbar-hide flex gap-3 p-1"
                 sx={{
                     scrollbarWidth: 'none',
                     '&::-webkit-scrollbar': { display: 'none' },
                     msOverflowStyle: 'none',
-                    px: 0.5
+                    height: '100%',
+                    alignItems: 'stretch'
                 }}
             >
                 {topGainers.map((coin) => (
-                    <Box key={coin.id} className="shrink-0 first:ml-0 last:mr-0">
+                    <Box key={coin.id} className="shrink-0 first:ml-0 last:mr-0"
+                        sx={{
+                            borderRadius: '1rem',
+                            height: '100%',
+                            display: 'flex'
+                        }}
+                    >
                         <GainerCard
                             coin={coin}
                             currency={currency}

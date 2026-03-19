@@ -10,7 +10,7 @@ export const useTopGainers = (coins: Coin[]) => {
         // 2. Orden: De mayor a menor ganancia
         // 3. Limite: Top 4
         return coins
-            .filter((coin: Coin) => coin.price_change_percentage_24h > 1)
+            .filter((coin: Coin) => coin.price_change_percentage_24h > 0)
             .sort((a: Coin, b: Coin) => b.price_change_percentage_24h - a.price_change_percentage_24h)
             .slice(0, 4);
     }, [coins]);

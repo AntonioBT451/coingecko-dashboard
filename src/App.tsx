@@ -97,7 +97,7 @@ export const App = () => {
         </div>
 
         {/* Panel izquierdo inferior */}
-        <div className="col-span-1 row-span-4 ">
+        <div className="col-span-1 row-span-4">
           <HighlightsSection coins={coins} currency={currency} isError={isError} isLoading={isLoading} />
         </div>
 
